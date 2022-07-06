@@ -1,5 +1,5 @@
-import React, {Component, useState } from "react";
-import { BrowserRouter, BrowserRouter as Router, HashRouter,Route, Routes, Switch } from "react-router-dom"
+import React from "react";
+import { HashRouter as Router ,Route, Routes } from "react-router-dom"
 import Home from "route/Home";
 import Auth from "route/Auth";
 import Calculate from "route/Calculate";
@@ -11,7 +11,7 @@ import EditPage from "route/EditPage";
 const AppRouter = ({ refreshUser,isLoggedIn,userObj }) => {
 
     return (
-        <BrowserRouter>
+        <Router>
             {isLoggedIn && <Navigation userObj={userObj}/>}
             <Routes>
                 {isLoggedIn ? (
@@ -28,7 +28,7 @@ const AppRouter = ({ refreshUser,isLoggedIn,userObj }) => {
                     </>
                 )}
             </Routes>
-        </BrowserRouter>
+        </Router>
     );
 }
 
