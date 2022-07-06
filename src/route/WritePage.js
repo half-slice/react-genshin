@@ -1,11 +1,14 @@
 import React, { useState } from "react";
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import { addDoc, collection } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
+import { getDownloadURL, ref , uploadString } from "firebase/storage";
+import { v4,uuidv4 } from "uuid";
 
 const WritePage = ({ userObj }) => {
     const [title,setTitle] = useState("");
     const [content,setContent] = useState("");
+    const [attachment,setAttachment] = useState(""); 
     const navigate = useNavigate();
 
     const onChange = (event) => {
@@ -23,13 +26,23 @@ const WritePage = ({ userObj }) => {
 
     const onSubmit = async(event) => {
         event.preventDefault();
+        let attachmentUrl = "";
+        
+        if(attachment !== ""){
+            const fileRef = ref(storageService,`${userObj.uid}/${v4()}`);
+            const response = await uploadString(fileRef, attachment, "data_url");
+            attachmentUrl = await getDownloadURL(response.ref);
+        }
+       
+        const post = {
+            title : title,
+            content : content,
+            createdAt : Date.now(),
+            creatorId : userObj.uid,
+            attachmentUrl,
+        };
         try{
-            const docRef = await addDoc(collection(dbService , "post"),{
-                title : title,
-                content : content,
-                createdAt : Date.now(),
-                creatorId : userObj.uid,
-            });
+            await addDoc(collection(dbService , "post"),post);
         }
         catch(error){
             console.error(error);
@@ -39,8 +52,28 @@ const WritePage = ({ userObj }) => {
         navigate("/");
     }
 
+    const onFileChange = (event) => {
+        const {
+            target : {files},
+        } = event;
+        const theFile = files[0];
+        const reader = new FileReader();
+        reader.onloadend = (finishedEvent) => {
+            const { 
+                currentTarget : {result}
+            } = finishedEvent
+            setAttachment(result);
+        }
+        reader.readAsDataURL(theFile);
+    }
+
+    const onClearPhotoClick = () => {
+        setAttachment(null);
+    }
+
     return(
         <div>
+            Write page
             <form onSubmit={onSubmit}>
                 <input 
                     name="title"
@@ -59,7 +92,17 @@ const WritePage = ({ userObj }) => {
                     value={content}
                 />
                 <br/>
-                <input type="submit" value="post" />    
+                <input type="file" accpet = "image/*" onChange={onFileChange}/>
+                <br/>
+                {attachment && (
+                    <div>
+                        <img src={attachment} width="50px" height="50px" />
+                        <br/>
+                        <button onClick={onClearPhotoClick}>Clear</button>
+                    </div>
+                )}
+                <br/> 
+                <input type="submit" value="post" />   
             </form>
         </div>
     )

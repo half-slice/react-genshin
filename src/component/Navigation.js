@@ -2,7 +2,7 @@ import React from "react";
 import { Nav, Navbar } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
-const Navigation = () => {
+const Navigation = ({ userObj }) => {
 
     return (    
         <nav>
@@ -14,7 +14,7 @@ const Navigation = () => {
                     <Link to="/calculate">Calculate</Link>
                 </li>
                 <li>
-                    <Link to="/profile">Profile</Link>
+                    <Link to="/profile">{userObj.displayName}'s Profile</Link>
                 </li>
             </ul>
         </nav>

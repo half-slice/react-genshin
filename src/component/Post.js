@@ -1,27 +1,32 @@
 import React ,{ useState }from "react";
-import { dbService } from "fbase";
+import { dbService, storageService } from "fbase";
 import { doc, updateDoc, deleteDoc } from "firebase/firestore";
-import { History } from "history";
+import { useNavigate } from "react-router-dom";
+import { deleteObject } from "firebase/storage";
+import { ref } from "firebase/storage";
+ 
 
-const Post = ({ userObj, isOwner,history }) => {
-    const [editing,setEditing] = useState(false);
-    const [newTitle,setNewTitle] = useState(userObj.title);
-    const [newContent,setNewContent] = useState(userObj.content);
+const Post = ({ userObj, isOwner }) => {
+    const navigate = useNavigate();
 
     const onDeleteClick = async() => {
         const ok = window.confirm("Are you sure you want to delete this post");
         console.log(ok);
         if(ok){
-            await deleteDoc(doc(dbService,"post",`${userObj.id}`));
+            try{
+                await deleteDoc(doc(dbService,"post",`${userObj.id}`));
+                if(userObj.attachmentUrl !== ""){
+                    await deleteObject(ref(storageService,userObj.attachmentUrl));
+                }
+            }
+            catch(error){
+                window.alert("fail to delete post");
+            }
         }
     }
 
     const onEditClick = () => {
-        // history.push({
-        //     pathname : "/editpage",
-        //     title : userObj.title,
-        //     content : userObj.content, 
-        // })    
+        navigate(`/editpage/id=${userObj.id}`, { state : userObj });
     }
 
     return(
@@ -32,10 +37,14 @@ const Post = ({ userObj, isOwner,history }) => {
             <h5>
                 {userObj.content}
             </h5>
+            {userObj.attachmentUrl && (
+                <img src={userObj.attachmentUrl} width="50px" height="50px" />
+            )}
             {isOwner && (
                 <>
+                    <br/>
                     <button onClick={onDeleteClick}>Delete</button>
-                    <button onClick={()=> { history.push("/editpage")}}>Edit</button>
+                    <button onClick={onEditClick}>Edit</button>
                 </>
             )}
         </div>
