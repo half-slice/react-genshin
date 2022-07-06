@@ -1,0 +1,10 @@
+{
+  "files": {
+    "main.js": "/react-genshin/static/js/main.c3e87def.js",
+    "index.html": "/react-genshin/index.html",
+    "main.c3e87def.js.map": "/react-genshin/static/js/main.c3e87def.js.map"
+  },
+  "entrypoints": [
+    "static/js/main.c3e87def.js"
+  ]
+}
