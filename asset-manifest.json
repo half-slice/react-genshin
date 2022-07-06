@@ -1,10 +1,10 @@
 {
   "files": {
-    "main.js": "/react-genshin/static/js/main.c3e87def.js",
+    "main.js": "/react-genshin/static/js/main.e8adcb0c.js",
     "index.html": "/react-genshin/index.html",
-    "main.c3e87def.js.map": "/react-genshin/static/js/main.c3e87def.js.map"
+    "main.e8adcb0c.js.map": "/react-genshin/static/js/main.e8adcb0c.js.map"
   },
   "entrypoints": [
-    "static/js/main.c3e87def.js"
+    "static/js/main.e8adcb0c.js"
   ]
 }
